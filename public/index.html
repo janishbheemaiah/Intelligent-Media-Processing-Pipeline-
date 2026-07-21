@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V-Pipeline - Login</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    
+    .login-container {
+      width: 100%;
+      max-width: 400px;
+    }
+    
+    .login-logo {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+    
+    .login-panel {
+      padding: 2.5rem;
+    }
+    
+    .tabs {
+      display: flex;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 0.8rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .tab.active {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--glass-border);
+      background: rgba(0,0,0,0.2);
+      color: var(--text-main);
+      font-family: inherit;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: rgba(0,0,0,0.3);
+    }
+    
+    .login-btn {
+      width: 100%;
+      margin-top: 1rem;
+    }
+    
+    .error-msg, .success-msg {
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      text-align: center;
+      display: none;
+    }
+    
+    .error-msg {
+      color: var(--danger);
+    }
+    
+    .success-msg {
+      color: #10b981; /* Green color for success */
+    }
+
+    #registerForm {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="login-container">
+    <div class="login-logo">
+      <i class="fa-solid fa-car-side"></i>
+      <span>V-Pipeline</span>
+    </div>
+    
+    <div class="glass-panel login-panel">
+      <div class="tabs">
+        <div class="tab active" id="tabLogin">Login</div>
+        <div class="tab" id="tabRegister">Register</div>
+      </div>
+      
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" required placeholder="admin@v-pipeline.com" value="admin@v-pipeline.com">
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" required placeholder="••••••••" value="password123">
+        </div>
+        
+        <button type="submit" class="btn primary-btn login-btn">Login to Dashboard</button>
+        <div id="loginMsg" class="error-msg">Invalid email or password.</div>
+      </form>
+      
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="regName">Full Name</label>
+          <input type="text" id="regName" required placeholder="John Doe">
+        </div>
+        
+        <div class="form-group">
+          <label for="regEmail">Email Address</label>
+          <input type="email" id="regEmail" required placeholder="john@example.com">
+        </div>
+        
+        <div class="form-group">
+          <label for="regPassword">Password</label>
+          <input type="password" id="regPassword" required placeholder="••••••••">
+        </div>
+        
+        <button type="submit" class="btn primary-btn login-btn">Create Account</button>
+        <div id="regMsg" class="success-msg">Registration successful! Please login.</div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const tabLogin = document.getElementById('tabLogin');
+    const tabRegister = document.getElementById('tabRegister');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const loginMsg = document.getElementById('loginMsg');
+    const regMsg = document.getElementById('regMsg');
+
+    tabLogin.addEventListener('click', () => {
+      tabLogin.classList.add('active');
+      tabRegister.classList.remove('active');
+      loginForm.style.display = 'block';
+      registerForm.style.display = 'none';
+      loginMsg.style.display = 'none';
+      regMsg.style.display = 'none';
+    });
+
+    tabRegister.addEventListener('click', () => {
+      tabRegister.classList.add('active');
+      tabLogin.classList.remove('active');
+      registerForm.style.display = 'block';
+      loginForm.style.display = 'none';
+      loginMsg.style.display = 'none';
+      regMsg.style.display = 'none';
+    });
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const pass = document.getElementById('password').value;
+      
+      // Simple frontend mock authentication
+      if (email && pass) {
+        // Store simple session flag
+        sessionStorage.setItem('isLoggedIn', 'true');
+        window.location.href = 'dashboard.html';
+      } else {
+        loginMsg.style.display = 'block';
+      }
+    });
+
+    registerForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('regName').value;
+      const email = document.getElementById('regEmail').value;
+      const pass = document.getElementById('regPassword').value;
+      
+      if (name && email && pass) {
+        regMsg.style.display = 'block';
+        regMsg.textContent = 'Registration successful! You can now login.';
+        regMsg.className = 'success-msg';
+        
+        // Auto-fill login form for convenience
+        document.getElementById('email').value = email;
+        document.getElementById('password').value = pass;
+        
+        // Switch to login tab after a short delay
+        setTimeout(() => {
+          tabLogin.click();
+        }, 1500);
+      }
+    });
+  </script>
+</body>
+</html>

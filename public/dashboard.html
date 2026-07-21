@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vehicle Media Pipeline - Dashboard</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  
+  <!-- Sidebar / Navigation -->
+  <nav class="sidebar">
+    <div class="logo">
+      <i class="fa-solid fa-car-side"></i>
+      <span>V-Pipeline</span>
+    </div>
+    <ul class="nav-links">
+      <li class="active" data-tab="upload"><i class="fa-solid fa-cloud-arrow-up"></i> Live Analysis</li>
+      <li data-tab="analytics"><i class="fa-solid fa-chart-pie"></i> Analytics</li>
+      <li data-tab="settings"><i class="fa-solid fa-gear"></i> Settings</li>
+    </ul>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <header>
+      <h1 id="page-title">Live Analysis Dashboard</h1>
+      <div class="user-profile" style="cursor: pointer;" onclick="sessionStorage.removeItem('isLoggedIn'); window.location.href='index.html';" title="Logout">
+        <span>Admin User <i class="fa-solid fa-right-from-bracket" style="margin-left: 10px; color: var(--danger);"></i></span>
+        <div class="avatar"><i class="fa-solid fa-user"></i></div>
+      </div>
+    </header>
+
+    <div class="glass-panel content-container">
+      
+      <!-- Upload & Live Analysis Tab -->
+      <section id="upload-tab" class="tab-content active">
+        <div class="upload-section">
+          <div class="upload-dropzone" id="dropzone">
+            <i class="fa-solid fa-file-arrow-up fa-3x"></i>
+            <h3>Drag & Drop Vehicle Image</h3>
+            <p>or click to browse from your computer</p>
+            <input type="file" id="fileInput" accept="image/*" hidden />
+            <button class="btn primary-btn" onclick="document.getElementById('fileInput').click()">Select File</button>
+          </div>
+          
+          <div class="analysis-status" id="status-container" style="display: none;">
+            <div class="status-indicator">
+              <div class="spinner" id="status-spinner"></div>
+              <h3 id="status-text">Uploading...</h3>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+          </div>
+        </div>
+
+        <div class="results-section" id="results-container" style="display: none;">
+          <div class="results-header" style="flex-wrap: wrap; gap: 10px; align-items: flex-start; flex-direction: column;">
+            <div style="display: flex; align-items: center; gap: 15px; width: 100%; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 15px;">
+                <h2>Analysis Results</h2>
+                <div class="decision-badge" id="overall-decision" style="font-size: 1.2rem; padding: 5px 15px; border-radius: 20px; background: rgba(0,0,0,0.2);">PENDING</div>
+              </div>
+              <div class="confidence-badge" id="confidence-badge">
+                <span id="confidence-val">98%</span> Confidence
+              </div>
+            </div>
+            <div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">
+              <i class="fa-solid fa-file-image"></i> File: <span id="image-filename" style="font-weight: 500;">image.jpg</span>
+            </div>
+          </div>
+          
+          <div class="metrics-grid" id="metrics-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; margin-top: 20px;">
+            <!-- Populated dynamically via JS -->
+          </div>
+
+          <h4 class="mt-4">Quality Checks</h4>
+          <div class="issues-list" id="issues-list">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Analytics Tab -->
+      <section id="analytics-tab" class="tab-content">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon blue"><i class="fa-solid fa-image"></i></div>
+            <div class="kpi-details">
+              <h4>Total Processed</h4>
+              <h2 id="kpi-total">0</h2>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon green"><i class="fa-solid fa-check-circle"></i></div>
+            <div class="kpi-details">
+              <h4>Accepted</h4>
+              <h2 id="kpi-accepted">0</h2>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon red"><i class="fa-solid fa-times-circle"></i></div>
+            <div class="kpi-details">
+              <h4>Rejected</h4>
+              <h2 id="kpi-rejected">0</h2>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon purple"><i class="fa-solid fa-bullseye"></i></div>
+            <div class="kpi-details">
+              <h4>Avg. Confidence</h4>
+              <h2 id="kpi-confidence">0%</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-container mt-4">
+          <div class="chart-box">
+            <h3>Acceptance Rate</h3>
+            <canvas id="acceptanceChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings Tab -->
+      <section id="settings-tab" class="tab-content">
+        <div class="settings-container">
+          <h2>System Configuration</h2>
+          <div class="setting-item">
+            <div>
+              <h4>Strict Blur Detection</h4>
+              <p>Reject images with even minor blur</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" checked>
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div class="setting-item">
+            <div>
+              <h4>Auto-Retry on Failure</h4>
+              <p>Automatically retry failed OCR jobs</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" checked>
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom JS -->
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+node_modules
+uploads/
+database.json
+.env
+eng.traineddata
+*.png
+logs/
