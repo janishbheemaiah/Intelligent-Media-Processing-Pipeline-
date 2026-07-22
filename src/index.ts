@@ -43,7 +43,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
   }
 
   const imageId = uuid()
-  const imagePath = `uploads\\${Date.now()}-${req.file.originalname}`
+  const imagePath = `uploads/${Date.now()}-${req.file.originalname}`
   
   // Since we save it right there:
   fs.renameSync(req.file.path, imagePath)
@@ -139,7 +139,8 @@ initDB().then(async () => {
   // Resume any pending/processing jobs left over if the server crashed
   await imageQueue.resumePending()
   
-  app.listen(3000, () => {
-    logger.info("🚀 Server running at http://localhost:3000")
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    logger.info(`🚀 Server running at http://localhost:${port}`)
   })
 })
